@@ -1,0 +1,106 @@
+<div class="store-list-container">
+  <h2><span class="emoji">🏬</span> Nos magasins</h2>
+
+  <div *ngIf="loading" class="loading">
+    <span class="loader"></span> Chargement...
+  </div>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <!-- Formulaire de création de magasin -->
+  <form (ngSubmit)="createStore()" class="store-form" autocomplete="off">
+    <input
+      type="text"
+      name="name"
+      [(ngModel)]="newStore.name"
+      placeholder="Nom du magasin"
+      required
+      autocomplete="off"
+    />
+    <input
+      type="text"
+      name="city"
+      [(ngModel)]="newStore.city"
+      placeholder="Ville"
+      required
+      autocomplete="off"
+    />
+    <button
+      type="submit"
+      [disabled]="loading || !newStore.name || !newStore.city"
+      aria-label="Ajouter le magasin"
+    >
+      ➕ Ajouter
+    </button>
+  </form>
+
+  <!-- Liste des magasins -->
+  <ul class="store-list" *ngIf="stores.length > 0">
+    <li
+      class="store-card"
+      [class.editing]="editStoreId === store.id"
+      *ngFor="let store of stores"
+    >
+      <ng-container *ngIf="editStoreId === store.id; else readMode">
+        <form (ngSubmit)="updateStore(store.id)" class="edit-form">
+          <input
+            type="text"
+            [(ngModel)]="editStoreData.name"
+            name="editName{{ store.id }}"
+            required
+            class="edit-input"
+            autocomplete="off"
+            placeholder="Nom du magasin"
+          />
+          <input
+            type="text"
+            [(ngModel)]="editStoreData.city"
+            name="editCity{{ store.id }}"
+            required
+            class="edit-input"
+            autocomplete="off"
+            placeholder="Ville"
+          />
+          <div class="edit-btns">
+            <button
+              type="submit"
+              class="validate"
+              [disabled]="loading"
+              aria-label="Valider"
+            >
+              ✔
+            </button>
+            <button
+              type="button"
+              class="cancel"
+              (click)="cancelEdit()"
+              aria-label="Annuler"
+            >
+              ✖
+            </button>
+          </div>
+        </form>
+      </ng-container>
+      <ng-template #readMode>
+        <div class="store-header">
+          <span class="store-icon">🏢</span>
+          {{ store.name }}
+        </div>
+        <div class="store-city">
+          <span class="store-location-icon">📍</span>
+          {{ store.city }}
+        </div>
+        <div class="store-actions">
+          <button class="edit" (click)="editStore(store)">✏️</button>
+          <button class="delete" (click)="deleteStore(store.id)">🗑️</button>
+        </div>
+      </ng-template>
+    </li>
+  </ul>
+
+  <div *ngIf="!loading && !error && !stores.length" class="no-store">
+    Aucun magasin trouvé.
+  </div>
+</div>

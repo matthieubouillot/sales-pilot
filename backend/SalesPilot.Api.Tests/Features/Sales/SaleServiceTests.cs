@@ -38,7 +38,7 @@ namespace SalesPilot.Api.Tests.Features.Sales
                 Date = DateTime.Today,
                 Product = "Produit test",
                 Quantity = 10,
-                UnitPrice = 2.5M,
+                Amount = 2.5M,
                 StockAfterSale = 90
             };
 
@@ -72,7 +72,7 @@ namespace SalesPilot.Api.Tests.Features.Sales
                 Date = DateTime.Today,
                 Product = "Ancien produit",
                 Quantity = 3,
-                UnitPrice = 5,
+                Amount = 5,
                 StockAfterSale = 97
             };
             var created = await service.CreateAsync(dto);
@@ -82,7 +82,7 @@ namespace SalesPilot.Api.Tests.Features.Sales
                 Date = DateTime.Today.AddDays(1),
                 Product = "Nouveau produit",
                 Quantity = 5,
-                UnitPrice = 10,
+                Amount = 10,
                 StockAfterSale = 92
             };
 
@@ -106,7 +106,7 @@ namespace SalesPilot.Api.Tests.Features.Sales
                 Date = DateTime.Today,
                 Product = "Produit à supprimer",
                 Quantity = 2,
-                UnitPrice = 3,
+                Amount = 3,
                 StockAfterSale = 98
             };
             var created = await service.CreateAsync(dto);

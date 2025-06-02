@@ -1,0 +1,152 @@
+<div class="sales-list-container">
+  <h2><span class="emoji">💸</span> Ventes</h2>
+
+  <div *ngIf="loading" class="loading">
+    <span class="loader"></span> Chargement...
+  </div>
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <!-- Formulaire création de vente -->
+  <form (ngSubmit)="createSale()" class="sales-form" autocomplete="off">
+    <input
+      type="text"
+      [(ngModel)]="newSale.product"
+      name="product"
+      placeholder="Produit"
+      required
+      autocomplete="off"
+    />
+    <input
+      type="number"
+      [(ngModel)]="newSale.amount"
+      name="amount"
+      placeholder="Montant"
+      required
+      min="0"
+      autocomplete="off"
+    />
+    <input
+      type="date"
+      [(ngModel)]="newSale.date"
+      name="date"
+      required
+      autocomplete="off"
+    />
+    <select
+      [(ngModel)]="newSale.storeId"
+      name="storeId"
+      required
+    >
+      <option value="" disabled selected hidden>Choisir un magasin</option>
+      <option *ngFor="let store of stores" [value]="store.id">
+        {{ store.name }} ({{ store.city }})
+      </option>
+    </select>
+    <button
+      type="submit"
+      [disabled]="loading || !newSale.product || !newSale.amount || !newSale.date || !newSale.storeId"
+      aria-label="Ajouter la vente"
+    >
+      ➕ Ajouter
+    </button>
+  </form>
+
+  <!-- Liste des ventes -->
+  <ul class="sales-list" *ngIf="sales.length > 0">
+    <li
+      class="sales-card"
+      [class.editing]="editSaleId === sale.id"
+      *ngFor="let sale of sales"
+    >
+      <ng-container *ngIf="editSaleId === sale.id; else readMode">
+        <form (ngSubmit)="updateSale(sale.id)" class="edit-form">
+          <input
+            type="text"
+            [(ngModel)]="editSaleData.product"
+            name="editProduct{{ sale.id }}"
+            required
+            class="edit-input"
+            autocomplete="off"
+            placeholder="Produit"
+          />
+          <input
+            type="number"
+            [(ngModel)]="editSaleData.amount"
+            name="editAmount{{ sale.id }}"
+            required
+            class="edit-input"
+            autocomplete="off"
+            placeholder="Montant"
+            min="0"
+          />
+          <input
+            type="date"
+            [(ngModel)]="editSaleData.date"
+            name="editDate{{ sale.id }}"
+            required
+            class="edit-input"
+            autocomplete="off"
+            placeholder="Date"
+          />
+          <select
+            [(ngModel)]="editSaleData.storeId"
+            name="editStoreId{{ sale.id }}"
+            required
+            class="edit-input"
+          >
+            <option value="" disabled hidden>Choisir un magasin</option>
+            <option *ngFor="let store of stores" [value]="store.id">
+              {{ store.name }} ({{ store.city }})
+            </option>
+          </select>
+          <div class="edit-btns">
+            <button
+              type="submit"
+              class="validate"
+              [disabled]="loading"
+              aria-label="Valider"
+            >
+              ✔
+            </button>
+            <button
+              type="button"
+              class="cancel"
+              (click)="cancelEdit()"
+              aria-label="Annuler"
+            >
+              ✖
+            </button>
+          </div>
+        </form>
+      </ng-container>
+      <ng-template #readMode>
+        <div class="sale-header">
+          <span class="sale-icon">🧾</span>
+          {{ sale.product }}
+        </div>
+        <div class="sale-detail">
+          <span>💰</span> {{ sale.amount }} €
+        </div>
+        <div class="sale-detail">
+          <span>📅</span> {{ sale.date | date: "shortDate" }}
+        </div>
+        <div class="sale-detail">
+          <span>🏬</span>
+          {{ getStoreName(sale.storeId) }}
+          <span *ngIf="getStoreCity(sale.storeId)">
+            ({{ getStoreCity(sale.storeId) }})
+          </span>
+        </div>
+        <div class="sale-actions">
+          <button class="edit" (click)="editSale(sale)">✏️</button>
+          <button class="delete" (click)="deleteSale(sale.id)">🗑️</button>
+        </div>
+      </ng-template>
+    </li>
+  </ul>
+  <div *ngIf="!loading && !error && !sales.length" class="no-sale">
+    Aucune vente enregistrée.
+  </div>
+</div>
